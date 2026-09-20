@@ -1,7 +1,6 @@
-const express = require("express");
-const port = 3000;
-const app = express();
+import app from "./src/app.js";
+const PORT = 3000;
 
-app.listen(port, () => {
-    console.log(`welcome to express ${port}`)
-})
+app.listen(PORT, () => {
+    console.log(`welcome to express ${PORT}`);
+});

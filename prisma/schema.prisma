@@ -11,3 +11,56 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  password   String
+  role       Role        @default(USER)
+  favorites  Favorite[]
+  userImages UserImage[]
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model UserImage {
+  id       String @id @default(uuid())
+  imageUrl String
+  userId   String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  categoryId  String
+
+  category  Category   @relation(fields: [categoryId], references: [id])
+  favorites Favorite[]
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  products Product[]
+}
