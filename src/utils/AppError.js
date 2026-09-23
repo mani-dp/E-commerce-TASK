@@ -9,10 +9,4 @@ class AppError extends Error {
     }
 }
 
-module.exports = AppError;
-
-// for example.....
-
-// if (!product) {
-//   throw new AppError("Product not found", 404);
-// }
+export default AppError;
