@@ -29,7 +29,7 @@ export const getUserImages = async (req, res, next) => {
         const userId = req.user.id;
         const images = await prisma.userImage.findMany({
             where: {
-                id,
+                userId,
             },
         });
         res.status(200).json({

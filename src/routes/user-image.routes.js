@@ -16,13 +16,11 @@ userImageRouter.post(
     upload.single("image"),
     uploadUserImage
 );
-
 userImageRouter.get(
     "/",
     authMiddleware,
     getUserImages
 );
-
 userImageRouter.delete(
     "/:id",
     authMiddleware,
