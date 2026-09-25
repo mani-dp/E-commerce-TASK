@@ -30,7 +30,7 @@ productRouter.post(
     createProduct
 );
 productRouter.patch(
-    "/update/:id",
+    "/:id",
     authMiddleware,
     adminMiddleware,
     upload.single("image"),
@@ -39,7 +39,7 @@ productRouter.patch(
     updateProduct
 );
 productRouter.delete(
-    "/delete/:id",
+    "/:id",
     authMiddleware,
     adminMiddleware,
     deleteProduct

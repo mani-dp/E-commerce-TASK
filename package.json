@@ -1,14 +1,14 @@
 {
   "name": "e-commerce-task",
   "version": "1.0.0",
-  "description": "",
+  "description": "RESTful e-commerce backend built with Express.js, Prisma, and SQLite",
   "license": "ISC",
   "author": "",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.0",
@@ -18,7 +18,9 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
-    "multer": "^2.4.0",
+    "multer": "^2.4.0"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.14",
     "prisma": "^7.10.0"
   }

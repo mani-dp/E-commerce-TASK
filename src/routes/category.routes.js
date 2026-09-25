@@ -24,7 +24,8 @@ categoryRouter.post(
     validate,
     authMiddleware,
     adminMiddleware,
-    createCategory);
+    createCategory
+);
 
 categoryRouter.patch(
     "/:id",

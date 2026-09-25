@@ -1,4 +1,5 @@
 import prisma from "../utils/prisma.js"
+import { deleteFile } from "../utils/file.js";
 
 export const getProducts = async (request, response, next) => {
     try {
@@ -47,16 +48,14 @@ export const getProductById = async (req, res, next) => {
 }
 
 export const createProduct = async (req, res, next) => {
-    try {
-        const {
-            name,
-            description,
-            price,
-            stock,
-            categoryId,
-        } = req.body;
+    let newImageUrl;
 
-        const imageUrl = req.file ? `/uploads/products/${req.file.filename}` : null;
+    try {
+        const { name, description, price, stock, categoryId } = req.body;
+
+        if (req.file) {
+            newImageUrl = `/uploads/products/${req.file.filename}`;
+        }
 
         const product = await prisma.product.create({
             data: {
@@ -65,80 +64,119 @@ export const createProduct = async (req, res, next) => {
                 price: Number(price),
                 stock: Number(stock),
                 categoryId,
-                imageUrl,
+                imageUrl: newImageUrl ?? null,
             },
             include: {
                 category: true,
-            }
+            },
+        });
 
-        })
         res.status(201).json({
             success: true,
             data: product,
             message: "Product created successfully",
-        })
+        });
 
     } catch (err) {
-        next(err)
+
+        if (newImageUrl) {
+            await deleteFile(newImageUrl);
+        }
+
+        next(err);
     }
 };
 
 export const updateProduct = async (req, res, next) => {
+
+    let newImageUrl;
     try {
         const { id } = req.params;
+        const { name, description, price, stock, categoryId } = req.body;
 
-        const {
-            name,
-            description,
-            price,
-            stock,
-            categoryId,
-        } = req.body;
+        const oldProduct = await prisma.product.findUnique({
+            where: { id },
+        });
 
-        const imageUrl = req.file
-            ? `/uploads/products/${req.file.filename}`
-            : undefined;
+        if (!oldProduct) {
+            return res.status(404).json({
+                success: false,
+                data: null,
+                message: "Product not found",
+            });
+        }
+        if (req.file) {
+            newImageUrl = `/uploads/products/${req.file.filename}`;
+        }
 
         const product = await prisma.product.update({
-            where: {
-                id,
-            },
+            where: { id },
             data: {
                 ...(name !== undefined && { name }),
                 ...(description !== undefined && { description }),
                 ...(price !== undefined && { price: Number(price) }),
                 ...(stock !== undefined && { stock: Number(stock) }),
                 ...(categoryId !== undefined && { categoryId }),
-                ...(imageUrl !== undefined && { imageUrl }),
+                ...(newImageUrl !== undefined && {
+                    imageUrl: newImageUrl,
+                }),
             },
             include: {
-                category: true
-            }
+                category: true,
+            },
         });
+
+
+        if (newImageUrl && oldProduct.imageUrl) {
+            await deleteFile(oldProduct.imageUrl);
+        }
+
         res.status(200).json({
             success: true,
             data: product,
-            message: "product updated successfully"
-        })
+            message: "Product updated successfully",
+        });
+
     } catch (err) {
-        next(err)
+
+        if (newImageUrl) {
+            await deleteFile(newImageUrl);
+        }
+
+        next(err);
     }
 };
 
+
 export const deleteProduct = async (req, res, next) => {
+
     try {
         const { id } = req.params;
-        const product = await prisma.product.delete({
-            where: {
-                id,
-            },
-        })
+        const product = await prisma.product.findUnique({
+            where: { id },
+        });
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                data: null,
+                message: "Product not found",
+            });
+        }
+        await prisma.product.delete({
+            where: { id },
+        });
+        if (product.imageUrl) {
+            await deleteFile(product.imageUrl);
+        }
+
         res.status(200).json({
             success: true,
             data: product,
-            message: "product deleted successfully"
-        })
+            message: "Product deleted successfully",
+        });
+
     } catch (err) {
-        next(err)
+        next(err);
     }
-}
+};

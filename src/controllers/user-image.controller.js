@@ -1,26 +1,44 @@
 import prisma from "../utils/prisma.js";
+import { deleteFile } from "../utils/file.js";
+
 
 export const uploadUserImage = async (req, res, next) => {
-    console.log("REQ USER:", req.user);
-    console.log("USER ID:", req.user.id);
+    let imageUrl;
+
     try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                data: null,
+                message: "Image file is required",
+            });
+        }
+
         const userId = req.user.id;
-        const imageUrl = `/uploads/users/${req.file.filename}`;
+
+        imageUrl = `/uploads/users/${req.file.filename}`;
 
         const userImage = await prisma.userImage.create({
             data: {
                 imageUrl,
                 userId,
-            }
+            },
         });
+
         res.status(201).json({
             success: true,
             data: userImage,
             message: "User image uploaded successfully",
+        });
 
-        })
     } catch (err) {
-        next(err)
+
+        // اگر DB شکست خورد، فایل اضافه را حذف کن
+        if (imageUrl) {
+            await deleteFile(imageUrl);
+        }
+
+        next(err);
     }
 };
 
@@ -61,17 +79,20 @@ export const deleteUserImage = async (req, res, next) => {
                 message: "User image not found",
             });
         }
-
-        const deletedImage = await prisma.userImage.delete({
-            where: {
-                id,
-            },
+        await prisma.userImage.delete({
+            where: { id },
         });
+
+        if (image.imageUrl) {
+            await deleteFile(image.imageUrl);
+        }
+
         res.status(200).json({
             success: true,
-            data: deletedImage,
+            data: image,
             message: "User image deleted successfully",
         });
+
     } catch (err) {
         next(err);
     }
