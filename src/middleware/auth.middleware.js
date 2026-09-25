@@ -8,7 +8,6 @@ const authMiddleware = (req, res, next) => {
         if (!authHeader) {
             throw new AppError("Authentication required", 401);
         }
-
         const token = authHeader.split(" ")[1];
 
         if (!token) {
@@ -18,9 +17,7 @@ const authMiddleware = (req, res, next) => {
             token,
             process.env.JWT_SECRET
         );
-
         req.user = decoded;
-
         next();
     } catch (error) {
         next(error);
