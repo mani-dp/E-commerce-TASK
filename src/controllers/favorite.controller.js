@@ -1,3 +1,4 @@
+import AppError from "../utils/AppError.js";
 import prisma from "../utils/prisma.js";
 
 
@@ -59,13 +60,9 @@ export const removeFavorite = async (req, res, next) => {
             },
         });
 
-        if (!favorite) {
-            return res.status(404).json({
-                success: false,
-                data: null,
-                message: "Product is not in favorite"
-            });
-        };
+            if (!favorite) {
+                throw new AppError("Product is not in favorite", 404)
+            }
 
         await prisma.favorite.delete({
             where: {

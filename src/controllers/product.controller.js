@@ -1,5 +1,6 @@
 import prisma from "../utils/prisma.js"
 import { deleteFile } from "../utils/file.js";
+import AppError from "../utils/AppError.js";
 
 export const getProducts = async (request, response, next) => {
     try {
@@ -31,12 +32,9 @@ export const getProductById = async (req, res, next) => {
         })
 
         if (!product) {
-            return res.status(404).json({
-                success: false,
-                data: null,
-                message: "Product not found",
-            })
+            throw new AppError("Product not found", 404);
         }
+
         res.status(200).json({
             success: true,
             data: product,
@@ -71,6 +69,10 @@ export const createProduct = async (req, res, next) => {
             },
         });
 
+        if (!product) {
+                throw new AppError("Cannot create product", 500)
+        }
+
         res.status(201).json({
             success: true,
             data: product,
@@ -99,11 +101,7 @@ export const updateProduct = async (req, res, next) => {
         });
 
         if (!oldProduct) {
-            return res.status(404).json({
-                success: false,
-                data: null,
-                message: "Product not found",
-            });
+            throw new AppError("Cannot update product", 500);
         }
         if (req.file) {
             newImageUrl = `/uploads/products/${req.file.filename}`;
@@ -157,11 +155,7 @@ export const deleteProduct = async (req, res, next) => {
         });
 
         if (!product) {
-            return res.status(404).json({
-                success: false,
-                data: null,
-                message: "Product not found",
-            });
+            throw new AppError("Cannot delete Product", 500);
         }
         await prisma.product.delete({
             where: { id },

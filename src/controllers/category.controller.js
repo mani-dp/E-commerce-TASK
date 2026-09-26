@@ -1,3 +1,4 @@
+import AppError from "../utils/AppError.js";
 import prisma from "../utils/prisma.js"
 
 export const getCategories = async (req, res, next) => {
@@ -23,12 +24,9 @@ export const getCategoryById = async (req, res, next) => {
             },
         });
 
+
         if (!category) {
-            return res.status(404).json({
-                success: false,
-                data: null,
-                message: "Category not found",
-            });
+            throw new AppError("Category not found", 404)
         }
 
         res.json({
@@ -71,6 +69,10 @@ export const updateCategory = async (req, res, next) => {
                 name,
             }
         });
+
+        if (!category) {
+            throw new AppError("Cannot update category", 500);
+        }
         res.status(200).json({
             success: true,
             data: category,
@@ -87,6 +89,10 @@ export const deleteCategory = async (req, res, next) => {
         const category = await prisma.category.delete({
             where: { id, }
         })
+
+        if (!category) {
+            throw new AppError("Cannot delete category", 500);
+        }
 
         res.status(200).json({
             success: true,

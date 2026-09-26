@@ -1,3 +1,4 @@
+import AppError from "../utils/AppError.js";
 import { generateToken } from "../utils/jwt.js";
 import prisma from "../utils/prisma.js";
 import bcrypt from "bcrypt";
@@ -55,12 +56,9 @@ const login = async (req, res, next) => {
                 email,
             }
         })
+
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                data: null,
-                message: "Invalid email or password",
-            })
+            throw new AppError("Invalid email or password", 401);
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -69,11 +67,7 @@ const login = async (req, res, next) => {
         );
 
         if (!isPasswordValid) {
-            return res.status(401).json({
-                success: false,
-                data: null,
-                message: "Invalid email or password"
-            })
+            throw new AppError("Invalid email or password", 401);
         }
 
         //     ** REMEMBER : should use t for token cuz it's convention; **    //

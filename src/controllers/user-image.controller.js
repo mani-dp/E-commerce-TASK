@@ -1,19 +1,16 @@
 import prisma from "../utils/prisma.js";
 import { deleteFile } from "../utils/file.js";
+import AppError from "../utils/AppError.js";
 
 
 export const uploadUserImage = async (req, res, next) => {
     let imageUrl;
 
     try {
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                data: null,
-                message: "Image file is required",
-            });
-        }
 
+        if (!red.file) {
+            throw new AppError("Image file is required", 400)
+        }
         const userId = req.user.id;
 
         imageUrl = `/uploads/users/${req.file.filename}`;
@@ -33,7 +30,6 @@ export const uploadUserImage = async (req, res, next) => {
 
     } catch (err) {
 
-        // اگر DB شکست خورد، فایل اضافه را حذف کن
         if (imageUrl) {
             await deleteFile(imageUrl);
         }
@@ -73,11 +69,7 @@ export const deleteUserImage = async (req, res, next) => {
         });
 
         if (!image) {
-            return res.status(404).json({
-                success: false,
-                data: null,
-                message: "User image not found",
-            });
+            throw new AppError("User image not found", 404)
         }
         await prisma.userImage.delete({
             where: { id },
