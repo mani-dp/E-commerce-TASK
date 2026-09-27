@@ -4,11 +4,6 @@ A  e-commerce bRESTfulackend built with Express.js, Prisma, and SQLite.
 
 The project provides authentication, role-based authorization, category and product management, favorites, and image upload functionality.
 
-# Admin pass & email
-
-- admin@gmail.com,
-- password :mwwm1234,
-
 ## Technologies
 
 - Node.js
@@ -39,67 +34,16 @@ The project provides authentication, role-based authorization, category and prod
 - Centralized error handling
 - Static file serving for uploaded images
 
-## folder structure
-
-├── src/
-│   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   ├── category.controller.js
-│   │   ├── product.controller.js
-│   │   ├── favorite.controller.js
-│   │   └── user-image.controller.js
-│   │
-│   ├── routes/
-│   │   ├── auth.routes.js
-│   │   ├── category.routes.js
-│   │   ├── product.routes.js
-│   │   ├── favorite.routes.js
-│   │   └── user-image.routes.js
-│   │
-│   ├── middleware/
-│   │   ├── auth.middleware.js
-│   │   ├── admin.middleware.js
-│   │   ├── upload.middleware.js
-│   │   ├── user-upload.middleware.js
-│   │   ├── error.middleware.js
-│   │   └── validation.middleware.js
-│   │
-│   ├── validators/
-│   │   ├── auth.validator.js
-│   │   ├── category.validator.js
-│   │   └── product.validator.js
-│   │
-│   ├── utils/
-│   │   ├── AppError.js
-│   │   ├── prisma.js
-│   │   ├── jwt.js
-│   │   └── file.js
-│   │
-│   ├── config/
-│   │   └── env.js
-│   │
-│   └── app.js
-│
-├── prisma/
-│   ├── schema.prisma
-│   ├── migrations/
-│   └── dev.db
-│
-├── uploads/
-│   ├── products/
-│   └── users/
-│
-├── .env
-├── .env.example
-├── .gitignore
-├── README.md
-└── index.js
-
 ## Installation
 
 - Clone the repository:
 
  git clone git@github.com:mani-dp/E-commerce-TASK.git
+
+ # Admin pass & email
+
+- admin@gmail.com
+- password :mwwm1234
 
 
 ## Environment Variables
