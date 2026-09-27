@@ -19,52 +19,6 @@ app.use("/api/user-images", userImageRouter);
 app.use("/api/favorites", favoriteRouter);
 ////////
 
-app.get("/:id", async (request, response, next) => {
-    try {
-        const { id } = request.params.id;
-        const product = await prisma.product.findUnique({
-            where: { id, },
-            include: {
-                category: true,
-            },
-        });
-        if (!product) {
-            return response.status(404).json({
-                success: false,
-                data: null,
-                message: "product was not found please try agin",
-            });
-        };
-        response.status(200).json({
-            success: true,
-            data: product,
-            message: "product fetched was successfully",
-        })
-    } catch (err) {
-        next(err)
-    }
-});
-
-app.post("/create", async(request, response, next) => {
-    try {
-        const { name, description, stock, price, categoryId } = request.body;
-        const product = await prisma.product.create({
-            data: {
-                name, description, stock,
-                price, categoryId
-            },
-            include : {
-                category : true,
-            },
-        });
-        if (!product) {
-            return response.status()   
-        }
-    } catch (err) {
-        next(err)
-    }
-})
-
 app.use(errorHandler);
 
 export default app;
